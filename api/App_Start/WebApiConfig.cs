@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Web.Http;
 //using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
+using System.Web.Http.Cors;
 
 namespace api
 {
@@ -17,8 +18,8 @@ namespace api
             //config.SuppressDefaultHostAuthentication();
             //config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
 
-            //var cors = new EnableCorsAttribute("http://localhost:9000", "*", "*");
-            //config.EnableCors(cors);
+            var cors = new EnableCorsAttribute("http://localhost:9000", "*", "*");
+            config.EnableCors(cors);
 
             // Web API routes
             config.MapHttpAttributeRoutes();
