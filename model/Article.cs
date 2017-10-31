@@ -17,6 +17,7 @@ namespace model
         public string Title { get; set; }
         [Required]
         public string Body { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreationDate { get; set; }
     }
 }

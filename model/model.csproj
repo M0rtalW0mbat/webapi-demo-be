@@ -51,6 +51,10 @@
   <ItemGroup>
     <Compile Include="Article.cs" />
     <Compile Include="DBContext.cs" />
+    <Compile Include="Migrations\201710311453461_CreationDate.cs" />
+    <Compile Include="Migrations\201710311453461_CreationDate.Designer.cs">
+      <DependentUpon>201710311453461_CreationDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -59,6 +63,11 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201710311453461_CreationDate.resx">
+      <DependentUpon>201710311453461_CreationDate.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
