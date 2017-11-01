@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using model;
+using api.Models;
 
 namespace api.Controllers
 {
@@ -17,27 +18,44 @@ namespace api.Controllers
         private DBContext db = new DBContext();
 
         // GET: api/Articles
-        public IQueryable<Article> GetArticles()
+        public IQueryable<ArticleDTO> GetArticles()
         {
-            return db.Articles;
+            var query =
+                from a in db.Articles
+                select new ArticleDTO()
+                {
+                    Id = a.Id,
+                    Body = a.Body,
+                    Title = a.Title,
+                    CreationDate = a.CreationDate
+                };
+            return query;
         }
 
         // GET: api/Articles/5
-        [ResponseType(typeof(Article))]
+        [ResponseType(typeof(ArticleDTO))]
         public IHttpActionResult GetArticle(int id)
         {
-            Article article = db.Articles.Find(id);
+            var article =
+                (from a in db.Articles
+                where a.Id == id
+                select new ArticleDTO()
+                {
+                    Id = a.Id,
+                    Body = a.Body,
+                    Title = a.Title,
+                    CreationDate = a.CreationDate
+                }).SingleOrDefault();
             if (article == null)
             {
                 return NotFound();
             }
-
             return Ok(article);
         }
 
         // PUT: api/Articles/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutArticle(int id, Article article)
+        public IHttpActionResult PutArticle(int id, ArticleDTO article)
         {
             if (!ModelState.IsValid)
             {
@@ -49,7 +67,10 @@ namespace api.Controllers
                 return BadRequest();
             }
 
-            db.Entry(article).State = EntityState.Modified;
+            var updateArticle = db.Articles.Find(id);
+            updateArticle.Title = article.Title;
+            updateArticle.Body = article.Body;
+            //db.Entry(updateArticle).State = EntityState.Modified;
 
             try
             {
@@ -71,25 +92,43 @@ namespace api.Controllers
         }
 
         // POST: api/Articles
-        [ResponseType(typeof(Article))]
-        public IHttpActionResult PostArticle(Article article)
+        [ResponseType(typeof(ArticleDTO))]
+        public IHttpActionResult PostArticle(ArticleDTO article)
         {
+            var newArticle = new Article()
+            {
+                Title = article.Title,
+                Body = article.Body
+            };
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Articles.Add(article);
+            db.Articles.Add(newArticle);
             db.SaveChanges();
+
+            article.Id = newArticle.Id;
+            article.CreationDate = newArticle.CreationDate;
 
             return CreatedAtRoute("DefaultApi", new { id = article.Id }, article);
         }
 
         // DELETE: api/Articles/5
-        [ResponseType(typeof(Article))]
+        [ResponseType(typeof(ArticleDTO))]
         public IHttpActionResult DeleteArticle(int id)
         {
-            Article article = db.Articles.Find(id);
+            var article = db.Articles.Find(id);
+            var articleDTO =
+                (from a in db.Articles
+                 where a.Id == id
+                 select new ArticleDTO()
+                 {
+                     Id = a.Id,
+                     Body = a.Body,
+                     Title = a.Title,
+                     CreationDate = a.CreationDate
+                 }).SingleOrDefault();
             if (article == null)
             {
                 return NotFound();
@@ -98,7 +137,7 @@ namespace api.Controllers
             db.Articles.Remove(article);
             db.SaveChanges();
 
-            return Ok(article);
+            return Ok(articleDTO);
         }
 
         protected override void Dispose(bool disposing)
